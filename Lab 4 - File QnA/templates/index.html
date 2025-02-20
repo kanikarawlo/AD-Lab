@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Query System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>File Query System</h1>
+
+        <!-- File Upload Section -->
+        <div class="upload-section">
+            <h2>Upload File</h2>
+            <p>Supported file types: PDF, Word (.docx), Excel (.xlsx), Text (.txt), json(.json)</p>
+            <input type="file" id="fileInput" accept=".pdf,.docx,.xlsx,.txt, .json">
+            <button onclick="uploadFile()">Upload</button>
+            <p id="uploadStatus"></p>
+        </div>
+
+        <!-- Query Section -->
+        <div class="query-section">
+            <h2>Ask a Question</h2>
+            <input type="text" id="queryInput" placeholder="Enter your question...">
+            <button onclick="submitQuery()">Ask</button>
+        </div>
+
+        <!-- Response Section -->
+        <div id="responseSection" class="hidden">
+            <h2>Response:</h2>
+            <p id="responseContent"></p>
+        </div>
+    </div>
+
+    <script>
+        async function uploadFile() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                alert("Please select a file.");
+                return;
+            }
+
+            if (file.size > 50 * 1024 * 1024) {
+                alert("File size exceeds 50MB limit.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.textContent = "Uploading and processing...";
+            uploadStatus.style.color = "blue";
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    uploadStatus.textContent = "File uploaded successfully!";
+                    uploadStatus.style.color = "green";
+                } else {
+                    throw new Error(data.error || "Upload failed");
+                }
+            } catch (error) {
+                uploadStatus.textContent = error.message;
+                uploadStatus.style.color = "red";
+            }
+        }
+
+        async function submitQuery() {
+            const queryInput = document.getElementById('queryInput');
+            const responseContent = document.getElementById('responseContent');
+            const responseSection = document.getElementById('responseSection');
+
+            if (!queryInput.value.trim()) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            responseSection.classList.remove('hidden');
+            responseContent.textContent = "Processing query...";
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: queryInput.value })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    responseContent.textContent = data.response;
+                } else {
+                    throw new Error(data.error || "Query failed");
+                }
+            } catch (error) {
+                responseContent.textContent = error.message;
+                responseContent.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>

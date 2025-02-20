@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Query System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Website Query System</h1>
+
+        <div class="upload-section">
+            <h2>Enter Website URL</h2>
+            <input type="text" id="urlInput" placeholder="Enter the website URL..." class="url-input">
+            <button onclick="scrapeWebsite()">Scrape Website</button>
+            <p id="scrapeStatus"></p>
+        </div>
+
+        <div class="query-section">
+            <h2>Ask a Question</h2>
+            <input type="text" id="queryInput" placeholder="Enter your question...">
+            <button onclick="submitQuery()">Ask</button>
+        </div>
+
+        <div id="responseSection" class="hidden">
+            <h2>Response:</h2>
+            <p id="responseContent"></p>
+        </div>
+    </div>
+
+    <script>
+        async function scrapeWebsite() {
+            const urlInput = document.getElementById('urlInput');
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                alert("Please enter a website URL.");
+                return;
+            }
+
+            const scrapeStatus = document.getElementById('scrapeStatus');
+            scrapeStatus.textContent = "Scraping website...";
+            scrapeStatus.style.color = "blue";
+
+            try {
+                const response = await fetch('/scrape', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: url })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    scrapeStatus.textContent = "Website scraped successfully!";
+                    scrapeStatus.style.color = "green";
+                } else {
+                    throw new Error(data.error || "Scraping failed");
+                }
+            } catch (error) {
+                scrapeStatus.textContent = error.message;
+                scrapeStatus.style.color = "red";
+            }
+        }
+
+        async function submitQuery() {
+            const queryInput = document.getElementById('queryInput');
+            const responseContent = document.getElementById('responseContent');
+            const responseSection = document.getElementById('responseSection');
+
+            if (!queryInput.value.trim()) {
+                alert("Please enter a question.");
+                return;
+            }
+
+            responseSection.classList.remove('hidden');
+            responseContent.textContent = "Processing query...";
+
+            try {
+                const response = await fetch('/query', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: queryInput.value })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    responseContent.textContent = data.response;
+                } else {
+                    throw new Error(data.error || "Query failed");
+                }
+            } catch (error) {
+                responseContent.textContent = error.message;
+                responseContent.style.color = "red";
+            }
+        }
+    </script>
+</body>
+</html>
