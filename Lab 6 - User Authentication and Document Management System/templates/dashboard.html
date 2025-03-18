@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h2>Welcome, {{ user[1] }}</h2>
+    <p>Email: {{ user[3] }}</p>
+
+    <h3>Your Grades</h3>
+    {% if grade_data %}
+        <p>Marks: {{ grade_data[0] }}</p>
+        <p>Grade: {{ grade_data[1] }}</p>
+    {% else %}
+        <p>No grades available.</p>
+    {% endif %}
+
+    <a href="{{ url_for('logout') }}" class="logout-btn">Logout</a>
+</div>
+{% endblock %}
