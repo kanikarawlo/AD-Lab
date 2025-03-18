@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = 'b7b9f439b32b972405aa938cd5740c8020d1edd7a13f9bddc94f456c6072080d'
+app.secret_key = os.getenv("SECRET_KEY")
 
 app.config['MYSQL_HOST'] = os.getenv("MYSQL_HOST")
 app.config['MYSQL_USER'] = os.getenv("MYSQL_USER")
