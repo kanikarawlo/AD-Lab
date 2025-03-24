@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Database Chatbot</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Ask the Database</h1>
+    
+    <div class="chat-container">
+        <div id="chatbox">
+            {% for entry in chat_history %}
+                <div class="user-message"><strong>You:</strong> {{ entry.query }}</div>
+                <div class="bot-message"><strong>Bot:</strong> {{ entry.answer }}</div>
+            {% endfor %}
+        </div>
+        
+        <form method="POST">
+            <input type="text" name="query" id="query" placeholder="Ask a question..." required>
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</body>
+</html>
