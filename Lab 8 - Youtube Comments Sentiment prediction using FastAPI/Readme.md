@@ -16,7 +16,7 @@ Copy the generated API Key for later use.
 ```git clone "https://github.com/kanikarawlo/AD-Lab.git"```  
 3.2 Navigate to the project directory.  
 3.3 Create a .env file and replace YOUTUBE_API_KEY in the script with your generated API Key.  
-3.4 Start the API server: ```uvicorn filename:app --reload```
+3.4 Start the API server: ```uvicorn filename:app --reload```  
 3.5 Once the server is running, access the interactive API documentation at: ```http://127.0.0.1:8000/docs```
 
 
